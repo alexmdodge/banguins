@@ -1,7 +1,7 @@
 {
-  "name": "api-websocket-lambda-dynamodb",
+  "name": "banguins-backend",
   "version": "1.0.0",
-  "description": "Use of an Application Load Balancer with an AutoScaling Group",
+  "description": "Banguins backend multiplayer negotiation server",
   "private": true,
   "scripts": {
     "build": "tsc",
