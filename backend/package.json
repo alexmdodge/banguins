@@ -1,7 +1,7 @@
 {
   "name": "banguins-backend",
   "version": "1.0.0",
-  "description": "Banguins backend multiplayer negotiation server",
+        "description": "Banguins backend multiplayer negotiation server",
   "private": true,
   "scripts": {
     "build": "tsc",
