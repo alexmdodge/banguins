@@ -13,8 +13,10 @@ import {
 const ddb = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(ddb);
 
+// eslint-disable-next-line no-undef
 const { TABLE_NAME } = process.env;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const handler = async (event, context) => {
   let connectionDataResponse;
 

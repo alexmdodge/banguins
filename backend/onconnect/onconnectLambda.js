@@ -7,8 +7,10 @@ import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
-export const handler = async (event, context) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const handler = async (event, _context) => {
   const command = new PutCommand({
+    // eslint-disable-next-line no-undef
     TableName: process.env.TABLE_NAME,
     Item: {
       connectionId: event.requestContext.connectionId,

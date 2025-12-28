@@ -13,12 +13,14 @@ import { DeleteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const handler = async (event, context) => {
   const command = new DeleteCommand({
-        TableName: process.env.TABLE_NAME,
-        Key: {
-        connectionId: event.requestContext.connectionId,
-        },
+    // eslint-disable-next-line no-undef
+    TableName: process.env.TABLE_NAME,
+    Key: {
+      connectionId: event.requestContext.connectionId,
+    },
   });
 
   try {
