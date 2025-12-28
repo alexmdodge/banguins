@@ -1,7 +1,7 @@
 {
   "name": "banguins-backend",
   "version": "1.0.0",
-        "description": "Banguins backend multiplayer negotiation server",
+  "description": "Banguins backend multiplayer negotiation server",
   "private": true,
   "scripts": {
     "build": "tsc",
@@ -36,6 +36,9 @@
     "constructs": "^10.0.0"
   },
   "lint-staged": {
-    "**/*": "npm run lint && npm run format"
+    "*.{js,jsx,ts,json}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
