@@ -14,22 +14,22 @@ const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
 export const handler = async (event, context) => {
-    const command = new DeleteCommand({
-        TableName: process.env.TABLE_NAME,
-        Key: {
-            connectionId: event.requestContext.connectionId,
-        },
-    });
+  const command = new DeleteCommand({
+    TableName: process.env.TABLE_NAME,
+    Key: {
+      connectionId: event.requestContext.connectionId,
+    },
+  });
 
-    try {
-        const response = await docClient.send(command);
-        console.log(response);
-    } catch (err) {
-        return {
-            statusCode: 500,
-            body: "Failed to disconnect: " + JSON.stringify(err),
-        };
-    }
+  try {
+    const response = await docClient.send(command);
+    console.log(response);
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: "Failed to disconnect: " + JSON.stringify(err),
+    };
+  }
 
-    return { statusCode: 200, body: "Disconnected." };
+  return { statusCode: 200, body: "Disconnected." };
 };

@@ -1,32 +1,41 @@
 {
-    "name": "api-websocket-lambda-dynamodb",
-    "version": "1.0.0",
-    "description": "Use of an Application Load Balancer with an AutoScaling Group",
-    "private": true,
-    "scripts": {
-        "build": "tsc",
-        "lint": "eslint .",
-        "watch": "tsc -w",
-        "cdk": "cdk"
-    },
-    "author": {
-        "name": "Amazon Web Services",
-        "url": "https://aws.amazon.com",
-        "organization": true
-    },
-    "license": "UNLICENSED",
-    "devDependencies": {
-        "@eslint/js": "^9.39.2",
-        "@types/node": "22.7.9",
-        "aws-cdk": "2.1010.0",
-        "eslint": "^9.39.2",
-        "globals": "^16.5.0",
-        "jiti": "^2.6.1",
-        "typescript": "~5.6.3",
-        "typescript-eslint": "^8.50.0"
-    },
-    "dependencies": {
-        "aws-cdk-lib": "2.190.0",
-        "constructs": "^10.0.0"
-    }
+  "name": "api-websocket-lambda-dynamodb",
+  "version": "1.0.0",
+  "description": "Use of an Application Load Balancer with an AutoScaling Group",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "format": "prettier . --write --ignore-unknown",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "prepare": "husky"
+  },
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com",
+    "organization": true
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "22.7.9",
+    "aws-cdk": "2.1010.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.6.1",
+    "lint-staged": "^16.2.7",
+    "prettier": "3.7.4",
+    "typescript": "~5.6.3",
+    "typescript-eslint": "^8.50.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.190.0",
+    "constructs": "^10.0.0"
+  },
+  "lint-staged": {
+    "**/*": "npm run lint && npm run format"
+  }
 }
