@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: MIT-0
 // @see https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/javascript_dynamodb_code_examples.html
 import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  DeleteCommand,
+  ScanCommandOutput,
+} from "@aws-sdk/lib-dynamodb";
 // @see https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/apigatewaymanagementapi/command/PostToConnectionCommand/
 import {
   ApiGatewayManagementApiClient,
@@ -12,13 +16,11 @@ import {
 
 const ddb = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(ddb);
-
-// eslint-disable-next-line no-undef
 const { TABLE_NAME } = process.env;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const handler = async (event, context) => {
-  let connectionDataResponse;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handler = async (event: any) => {
+  let connectionDataResponse: ScanCommandOutput;
 
   // Get a list of connections to our API that have been recorded in DynamoDB.
   try {
@@ -27,11 +29,12 @@ export const handler = async (event, context) => {
       ProjectionExpression: "connectionId",
     });
     connectionDataResponse = await docClient.send(command);
-  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
     return { statusCode: 500, body: e.stack };
   }
   console.info(
-    `Found ${connectionDataResponse.Items.length} connections`,
+    `Found ${connectionDataResponse?.Items?.length} connections`,
     connectionDataResponse.Items,
   );
 
@@ -44,7 +47,7 @@ export const handler = async (event, context) => {
   const postData = JSON.parse(event.body).data;
   console.log(`Will send POST data to APIGW: ${postData}`);
 
-  for (const connection of connectionDataResponse.Items) {
+  for (const connection of connectionDataResponse?.Items ?? []) {
     const connectionId = connection.connectionId.S;
     console.log(`Trying to send data for connection: ${connectionId}`);
     try {

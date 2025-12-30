@@ -1,6 +1,3 @@
-// Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: MIT-0
-
 // https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-route-keys-connect-disconnect.html
 // The $disconnect route is executed after the connection is closed.
 // The connection can be closed by the server or by the client. As the connection is already closed when it is executed,
@@ -13,8 +10,8 @@ import { DeleteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const handler = async (event, context) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handler = async (event: any) => {
   const command = new DeleteCommand({
     // eslint-disable-next-line no-undef
     TableName: process.env.TABLE_NAME,

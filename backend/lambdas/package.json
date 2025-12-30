@@ -1,0 +1,17 @@
+{
+  "name": "banguins-lambdas",
+  "version": "1.0.0",
+  "description": "Lambdas to perform Websocket operations with DynamoDB",
+  "private": true,
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/node": "22.7.9",
+    "@types/uuid": "*"
+  },
+  "dependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.529.1",
+    "@aws-sdk/client-dynamodb": "^3.538.0",
+    "@aws-sdk/lib-dynamodb": "^3.538.0",
+    "uuid": "*"
+  }
+}
