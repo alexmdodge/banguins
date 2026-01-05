@@ -13,7 +13,6 @@ const docClient = DynamoDBDocumentClient.from(client);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handler = async (event: any) => {
   const command = new DeleteCommand({
-    // eslint-disable-next-line no-undef
     TableName: process.env.TABLE_NAME,
     Key: {
       connectionId: event.requestContext.connectionId,

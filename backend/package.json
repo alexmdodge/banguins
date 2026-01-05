@@ -4,6 +4,7 @@
   "description": "Banguins backend multiplayer negotiation server",
   "private": true,
   "scripts": {
+    "postinstall": "(cd lambdas && npm install)",
     "precommit": "npm run lint && npm run format",
     "build": "tsc",
     "lint": "eslint .",
