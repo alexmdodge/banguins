@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { AssetCode, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Runtime } from "aws-cdk-lib/aws-lambda";
 import {
   CfnDeployment,
   CfnIntegration,
@@ -7,7 +7,7 @@ import {
   CfnStage,
   WebSocketApi,
 } from "aws-cdk-lib/aws-apigatewayv2";
-import { App, Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { App, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import {
   Effect,
   PolicyStatement,
@@ -32,6 +32,8 @@ const LAMBDAS_ROOT = join(__dirname, "lambdas");
 class BanguinsStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
+
+    const { region, account_id } = config;
 
     // Step 1 - Initialize API
     const name = `${id}-api`;
@@ -64,46 +66,28 @@ class BanguinsStack extends Stack {
       runtime: Runtime.NODEJS_LATEST,
     };
 
+    const lambdaWebsocketPolicy = new PolicyStatement({
+      actions: ["execute-api:ManageConnections"],
+      resources: [
+        `arn:aws:execute-api:${region}:${account_id}:${api.apiId}:/*`,
+      ],
+      effect: Effect.ALLOW,
+    });
+
     const connectFunc = new NodejsFunction(this, "connect-lambda", {
       entry: join(LAMBDAS_ROOT, "onconnect.ts"),
       ...lambdasDefaults,
     });
 
-    const disconnectFunc = new Function(this, "disconnect-lambda", {
-      code: new AssetCode("./ondisconnect"),
-      handler: "ondisconnectLambda.handler",
-      runtime: Runtime.NODEJS_LATEST,
-      timeout: Duration.seconds(300),
-      memorySize: 256,
-      environment: {
-        TABLE_NAME: BANGUINS_TABLE_NAME,
-      },
+    const disconnectFunc = new NodejsFunction(this, "disconnect-lambda", {
+      entry: join(LAMBDAS_ROOT, "ondisconnect.ts"),
+      ...lambdasDefaults,
     });
 
-    const messageFunc = new Function(this, "message-lambda", {
-      code: new AssetCode("./sendmessage"),
-      handler: "sendmessageLambda.handler",
-      runtime: Runtime.NODEJS_LATEST,
-      timeout: Duration.seconds(300),
-      memorySize: 256,
-      initialPolicy: [
-        new PolicyStatement({
-          actions: ["execute-api:ManageConnections"],
-          resources: [
-            "arn:aws:execute-api:" +
-              config["region"] +
-              ":" +
-              config["account_id"] +
-              ":" +
-              api.apiId +
-              "/*",
-          ],
-          effect: Effect.ALLOW,
-        }),
-      ],
-      environment: {
-        TABLE_NAME: BANGUINS_TABLE_NAME,
-      },
+    const messageFunc = new NodejsFunction(this, "message-lambda", {
+      entry: join(LAMBDAS_ROOT, "sendmessage.ts"),
+      initialPolicy: [lambdaWebsocketPolicy],
+      ...lambdasDefaults,
     });
 
     table.grantReadWriteData(connectFunc);
