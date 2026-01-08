@@ -3,6 +3,7 @@ import { Runtime } from "aws-cdk-lib/aws-lambda";
 import {
   CfnDeployment,
   CfnIntegration,
+  CfnIntegrationProps,
   CfnRoute,
   CfnStage,
   WebSocketApi,
@@ -54,7 +55,7 @@ class BanguinsStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    // Step 3 - Setup Lambda Functions
+    // Step 3 - Setup Lambda Functions & Access Policies
     const lambdasDefaults: NodejsFunctionProps = {
       bundling: {
         externalModules: ["aws-sdk"],
@@ -94,8 +95,8 @@ class BanguinsStack extends Stack {
     table.grantReadWriteData(disconnectFunc);
     table.grantReadWriteData(messageFunc);
 
-    // access role for the socket api to access the socket lambda
-    const policy = new PolicyStatement({
+    // Step 4 - Allow API Gateway to Access Lambdas
+    const apiWebsocketPolicy = new PolicyStatement({
       effect: Effect.ALLOW,
       resources: [
         connectFunc.functionArn,
@@ -105,58 +106,38 @@ class BanguinsStack extends Stack {
       actions: ["lambda:InvokeFunction"],
     });
 
-    const role = new Role(this, `${name}-iam-role`, {
+    const apiWebsocketRole = new Role(this, `${name}-iam-role`, {
       assumedBy: new ServicePrincipal("apigateway.amazonaws.com"),
     });
-    role.addToPolicy(policy);
+    apiWebsocketRole.addToPolicy(apiWebsocketPolicy);
 
-    // lambda integration
-    const connectIntegration = new CfnIntegration(
-      this,
-      "connect-lambda-integration",
-      {
+    // Step 5 - Connect Lambdas to API Gateway Websocket
+    const createIntegration = (name: string, arn: string): CfnIntegration => {
+      const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${arn}/invocations`;
+      const props: CfnIntegrationProps = {
         apiId: api.apiId,
         integrationType: "AWS_PROXY",
-        integrationUri:
-          "arn:aws:apigateway:" +
-          config["region"] +
-          ":lambda:path/2015-03-31/functions/" +
-          connectFunc.functionArn +
-          "/invocations",
-        credentialsArn: role.roleArn,
-      },
+        integrationUri,
+        credentialsArn: apiWebsocketRole.roleArn,
+      };
+
+      return new CfnIntegration(this, `${name}-lambda-integration`, props);
+    };
+
+    const connectIntegration = createIntegration(
+      "connect",
+      connectFunc.functionArn,
     );
-    const disconnectIntegration = new CfnIntegration(
-      this,
-      "disconnect-lambda-integration",
-      {
-        apiId: api.apiId,
-        integrationType: "AWS_PROXY",
-        integrationUri:
-          "arn:aws:apigateway:" +
-          config["region"] +
-          ":lambda:path/2015-03-31/functions/" +
-          disconnectFunc.functionArn +
-          "/invocations",
-        credentialsArn: role.roleArn,
-      },
+    const disconnectIntegration = createIntegration(
+      "disconnect",
+      disconnectFunc.functionArn,
     );
-    const messageIntegration = new CfnIntegration(
-      this,
-      "message-lambda-integration",
-      {
-        apiId: api.apiId,
-        integrationType: "AWS_PROXY",
-        integrationUri:
-          "arn:aws:apigateway:" +
-          config["region"] +
-          ":lambda:path/2015-03-31/functions/" +
-          messageFunc.functionArn +
-          "/invocations",
-        credentialsArn: role.roleArn,
-      },
+    const messageIntegration = createIntegration(
+      "message",
+      messageFunc.functionArn,
     );
 
+    // Step 6 - Correct API Gateway Routes
     const connectRoute = new CfnRoute(this, "connect-route", {
       apiId: api.apiId,
       routeKey: "$connect",
