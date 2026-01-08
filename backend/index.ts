@@ -68,11 +68,11 @@ class BanguinsStack extends Stack {
     };
 
     const lambdaWebsocketPolicy = new PolicyStatement({
-      actions: ["execute-api:ManageConnections"],
+      effect: Effect.ALLOW,
       resources: [
         `arn:aws:execute-api:${region}:${account_id}:${api.apiId}:/*`,
       ],
-      effect: Effect.ALLOW,
+      actions: ["execute-api:ManageConnections"],
     });
 
     const connectFunc = new NodejsFunction(this, "connect-lambda", {
@@ -137,7 +137,7 @@ class BanguinsStack extends Stack {
       messageFunc.functionArn,
     );
 
-    // Step 6 - Correct API Gateway Routes
+    // Step 6 - Connect API Gateway Routes
     const connectRoute = new CfnRoute(this, "connect-route", {
       apiId: api.apiId,
       routeKey: "$connect",
