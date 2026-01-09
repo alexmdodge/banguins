@@ -9,5 +9,6 @@ node_modules
 .cdk.staging
 cdk.out
 
+dist/
 # Parcel default cache directory
 .parcel-cache
