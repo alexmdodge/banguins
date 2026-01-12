@@ -7,16 +7,13 @@
     "postinstall": "(cd lambdas && npm install)",
     "precommit": "npm run lint && npm run format",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier . --write --ignore-unknown",
     "watch": "tsc -w",
     "cdk": "cdk",
+    "synth": "cdk --synth",
     "prepare": "husky"
-  },
-  "author": {
-    "name": "Amazon Web Services",
-    "url": "https://aws.amazon.com",
-    "organization": true
   },
   "license": "UNLICENSED",
   "devDependencies": {
