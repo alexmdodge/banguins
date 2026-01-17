@@ -67,9 +67,7 @@ npm run deploy
 npm run delete
 ```
 
-After the deployment you will see the API's URL, which represents the url you can then use. Past URLs are:
-
-- `wss://39mbb0jtq3.execute-api.us-east-1.amazonaws.com/dev`
+After the deployment, the latest endpoint will be copied as a resource across the project.
 
 ## CloudFormation Templates
 
@@ -83,26 +81,15 @@ Then check the output file in the "cdk.out" directory.
 
 ## Testing
 
-To test the WebSocket API, you can use [wscat](https://github.com/websockets/wscat), an open-source command line tool.
+### Local Server
 
-1. [Install NPM](https://www.npmjs.com/get-npm).
-2. Install wscat:
+Using AWS SAM CLI we can deploy and run the build locally:
 
-```bash
-$ npm install -g wscat
+```sh
+npm run synth
+npm run local
 ```
 
-3. On the console, connect to your published API endpoint by executing the following command:
+### Remote Testing
 
-```bash
-$ wscat -c wss://{YOUR-API-ID}.execute-api.{YOUR-REGION}.amazonaws.com/{STAGE}
-```
-
-4. To test the sendMessage function, send a JSON message like the following example. The Lambda function sends it back using the callback URL:
-
-```bash
-$ wscat -c wss://{YOUR-API-ID}.execute-api.{YOUR-REGION}.amazonaws.com/prod
-connected (press CTRL+C to quit)
-> {"action":"sendmessage", "data":"hello world"}
-< hello world
-```
+Run the `/admin` frontend application in the root of the repo. This provides various debug tools in a front end for validating the backend server is functioning as expected.

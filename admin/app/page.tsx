@@ -4,9 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useRef, useState } from "react";
+import * as BACKEND from "../config/latest-deploy.json";
+import { Input } from "@/components/ui/input";
 
 // NOTE: This can change
-const WS_URL = "wss://39mbb0jtq3.execute-api.us-east-1.amazonaws.com/dev";
+const WS_URL = BACKEND["banguins-app"]?.websocketapiendpoint;
 
 const States = {
   DISCONNECTED: "Disconnected",
@@ -71,7 +73,9 @@ export default function Home() {
 
   const sendMessage = () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(input);
+      socketRef.current.send(
+        JSON.stringify({ action: "sendmessage", data: input })
+      );
       setInput("");
       return;
     }
@@ -80,8 +84,8 @@ export default function Home() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 p-6">
-      <section className="space-y-2">
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 p-3">
+      <section className="space-y-2 bg-slate-200 p-4 rounded-md">
         <h1 className="text-2xl font-semibold">Banguins Dashboard</h1>
         <p className="text-sm text-muted-foreground">
           Game Websocket Test Client
@@ -91,17 +95,26 @@ export default function Home() {
       <section className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Connection</CardTitle>
+            <CardTitle className="bg-slate-600 text-white p-4 rounded-md m-0">
+              Connection
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="flex items-center gap-2">
+            <p>Websocket Status:</p>
             <ConnectionStatusBadge state={wsState} />
-
-            <div className="flex flex-wrap items-center gap-2">
-              <Button variant="default">Connect</Button>
-              <Button variant="outline">Disconnect</Button>
-              <Button variant="ghost">Reconnect</Button>
+          </CardContent>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Button variant="default" onClick={sendMessage}>
+                Send Message
+              </Button>
+              <Input
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Websocket message . . ."
+              ></Input>
             </div>
           </CardContent>
+          <hr />
           {status.map((sts, i) => (
             <CardContent key={i} className="space-y-2">
               {sts}
@@ -111,7 +124,9 @@ export default function Home() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Logs</CardTitle>
+            <CardTitle className="bg-slate-600 text-white p-4 rounded-md">
+              Messages
+            </CardTitle>
           </CardHeader>
           {messages.map((msg, i) => (
             <CardContent key={i} className="space-y-2">

@@ -12,3 +12,4 @@ cdk.out
 dist/
 # Parcel default cache directory
 .parcel-cache
+.aws-sam

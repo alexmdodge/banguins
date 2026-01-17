@@ -34,7 +34,7 @@ class BanguinsStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const { region, account_id } = config;
+    const { region, account_id, stage } = config;
 
     // Step 1 - Initialize API
     const name = `${id}-api`;
@@ -64,13 +64,13 @@ class BanguinsStack extends Stack {
       environment: {
         TABLE_NAME: BANGUINS_TABLE_NAME,
       },
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: Runtime.NODEJS_22_X,
     };
 
     const lambdaWebsocketPolicy = new PolicyStatement({
       effect: Effect.ALLOW,
       resources: [
-        `arn:aws:execute-api:${region}:${account_id}:${api.apiId}:/*`,
+        `arn:aws:execute-api:${region}:${account_id}:${api.apiId}/${stage}/POST/@connections/*`,
       ],
       actions: ["execute-api:ManageConnections"],
     });
