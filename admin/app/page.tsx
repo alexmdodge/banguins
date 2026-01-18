@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useRef, useState } from "react";
 import * as BACKEND from "../config/latest-deploy.json";
 import { Input } from "@/components/ui/input";
+import { generateGameId } from "./game/utils";
+import { Label } from "@radix-ui/react-label";
 
 // NOTE: This can change
-const WS_URL = BACKEND["banguins-app"]?.websocketapiendpoint;
+const WS_URL = `${BACKEND["banguins-app"]?.websocketapiendpoint}`;
 
 const States = {
   DISCONNECTED: "Disconnected",
@@ -32,16 +34,32 @@ function ConnectionStatusBadge({ state }: { state: string }) {
   return <Badge variant="outline">{States.DISCONNECTED}</Badge>;
 }
 
+type GameMessage = {
+  userId: string;
+  gameId: string;
+  message: string;
+};
+
 export default function Home() {
   const [wsState, setWsState] = useState(States.DISCONNECTED);
+  const [gameIdVal, setGameIdVal] = useState<string>(generateGameId());
+  const [gameId, setGameId] = useState<string | undefined>();
+  const [userId, setUserId] = useState<string | undefined>();
   const [status, setStatus] = useState<string[]>([]);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<GameMessage[]>([]);
   const [input, setInput] = useState("");
-
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket(WS_URL);
+    if (socketRef.current) return;
+    if (!gameId) return;
+
+    let GAME_URL = `${WS_URL}?gameId=${gameId}`;
+    if (userId) {
+      GAME_URL += `&userId=${userId}`;
+    }
+
+    const socket = new WebSocket(GAME_URL);
     socketRef.current = socket;
 
     socket.onopen = () => {
@@ -62,14 +80,19 @@ export default function Home() {
       setStatus((prev) => [...prev, "Websocket errored"]);
     };
     socket.onmessage = (event) => {
-      setMessages((prev) => [...prev, event.data]);
+      try {
+        const msg: GameMessage = JSON.parse(event.data);
+        setMessages((prev) => [...prev, msg]);
+      } catch (e) {
+        setStatus((prev) => [...prev, `Error parsing msg: ${e}`]);
+      }
     };
 
     return () => {
       socket.close();
       socketRef.current = null;
     };
-  }, []);
+  }, [gameId, userId]);
 
   const sendMessage = () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
@@ -85,7 +108,7 @@ export default function Home() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 p-3">
-      <section className="space-y-2 bg-slate-200 p-4 rounded-md">
+      <section className="space-y-2 bg-slate-300 p-4 rounded-md shadow">
         <h1 className="text-2xl font-semibold">Banguins Dashboard</h1>
         <p className="text-sm text-muted-foreground">
           Game Websocket Test Client
@@ -103,18 +126,62 @@ export default function Home() {
             <p>Websocket Status:</p>
             <ConnectionStatusBadge state={wsState} />
           </CardContent>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Button variant="default" onClick={sendMessage}>
-                Send Message
-              </Button>
+          <hr />
+          <CardContent className="flex flex-col gap-2">
+            <div className="grid w-full max-w-sm items-center gap-2">
+              <Label htmlFor="userId" className="text-sm">
+                User ID
+              </Label>
               <Input
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Websocket message . . ."
-              ></Input>
+                id="userId"
+                placeholder="Enter a user ID for the game messages"
+                onChange={(e) => setUserId(e.target.value)}
+                maxLength={32}
+                autoCapitalize="characters"
+                disabled={socketRef.current !== null}
+              />
             </div>
+            <div className="grid w-full max-w-sm items-center gap-2">
+              <Label htmlFor="gameId" className="text-sm">
+                Game ID
+              </Label>
+              <div className="flex w-full max-w-md">
+                <Input
+                  id="gameId"
+                  placeholder="Enter or paste game code"
+                  value={gameIdVal}
+                  onChange={(e) => setGameIdVal(e.target.value)}
+                  maxLength={5}
+                  autoCapitalize="characters"
+                  className="rounded-r-none rounded-l-md"
+                  disabled={socketRef.current !== null}
+                />
+                <Button
+                  variant="default"
+                  className="cursor-pointer rounded-none"
+                  disabled={socketRef.current !== null}
+                  onClick={() => setGameId(gameIdVal)}
+                >
+                  Apply
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="cursor-pointer rounded-l-none rounded-r-md border-2"
+                  disabled={socketRef.current !== null}
+                  onClick={() => {
+                    setGameIdVal(generateGameId());
+                  }}
+                >
+                  Generate
+                </Button>
+              </div>
+            </div>
+            <div className="flex w-full"></div>
           </CardContent>
           <hr />
+          <CardContent>
+            <p>Status Messages</p>
+          </CardContent>
           {status.map((sts, i) => (
             <CardContent key={i} className="space-y-2">
               {sts}
@@ -128,9 +195,27 @@ export default function Home() {
               Messages
             </CardTitle>
           </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Button
+                className="cursor-pointer"
+                variant="default"
+                onClick={sendMessage}
+                disabled={wsState !== States.CONNECTED}
+              >
+                Send Message
+              </Button>
+              <Input
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Enter message"
+                disabled={wsState !== States.CONNECTED}
+              ></Input>
+            </div>
+          </CardContent>
+          <hr />
           {messages.map((msg, i) => (
             <CardContent key={i} className="space-y-2">
-              {msg}
+              [{msg.userId}] | {msg.message}
             </CardContent>
           ))}
         </Card>

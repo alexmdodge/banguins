@@ -1,32 +1,52 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { APIGatewayProxyEvent } from "aws-lambda";
 
+const MAX_USERID_LEN = 32;
 const client = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(client);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const handler = async (event: any) => {
-    console.log("Connect event:", JSON.stringify(Object.keys(event)));
-    console.log(
-        "Connect requestContext:",
-        JSON.stringify(Object.keys(event.requestContext)),
-    );
-    console.log(
-        "Connect requestContext:",
-        JSON.stringify(Object.keys(event["queryStringParameters"] ?? {})),
-    );
+export const handler = async (event: APIGatewayProxyEvent) => {
+    const { connectionId } = event.requestContext;
+
+    if (!connectionId) {
+        return {
+            statusCode: 500,
+            body: "Error establishing connection via Websocket",
+        };
+    }
+
+    const { gameId, userId = connectionId.substring(0, MAX_USERID_LEN) } =
+        event?.queryStringParameters ?? {};
+
+    if (!gameId) {
+        return {
+            statusCode: 400,
+            body: "Connection request missing gameId.",
+        };
+    }
+
+    if (userId.length > MAX_USERID_LEN) {
+        return {
+            statusCode: 400,
+            body: "userId is greater than length 32 characters.",
+        };
+    }
 
     const command = new PutCommand({
         TableName: process.env.TABLE_NAME,
         Item: {
-            connectionId: event.requestContext.connectionId,
+            connectionId,
+            gameId,
+            userId: userId.substring(0, 32),
+            connectedAt: new Date().toISOString(),
         },
     });
 
     try {
-        const response = await ddb.send(command);
-        console.log(response);
+        await ddb.send(command);
     } catch (err) {
+        console.error(err);
         return {
             statusCode: 500,
             body: "Failed to connect: " + JSON.stringify(err),
