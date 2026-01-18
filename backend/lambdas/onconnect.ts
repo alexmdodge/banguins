@@ -1,11 +1,21 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { APIGatewayProxyWebsocketEventV2 } from "aws-lambda";
 
 const client = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(client);
 
-export const handler = async (event: APIGatewayProxyWebsocketEventV2) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handler = async (event: any) => {
+    console.log("Connect event:", JSON.stringify(Object.keys(event)));
+    console.log(
+        "Connect requestContext:",
+        JSON.stringify(Object.keys(event.requestContext)),
+    );
+    console.log(
+        "Connect requestContext:",
+        JSON.stringify(Object.keys(event["queryStringParameters"] ?? {})),
+    );
+
     const command = new PutCommand({
         TableName: process.env.TABLE_NAME,
         Item: {

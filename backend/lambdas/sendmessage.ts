@@ -13,13 +13,13 @@ import {
     GoneException,
     PostToConnectionCommand,
 } from "@aws-sdk/client-apigatewaymanagementapi";
-import { APIGatewayProxyWebsocketEventV2 } from "aws-lambda";
 
 const ddb = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(ddb);
 const { TABLE_NAME } = process.env;
 
-export const handler = async (event: APIGatewayProxyWebsocketEventV2) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handler = async (event: any) => {
     let connectionDataResponse: ScanCommandOutput;
 
     // Get a list of connections to our API that have been recorded in DynamoDB.

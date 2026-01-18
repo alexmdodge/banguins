@@ -5,13 +5,13 @@
 // API Gateway will try its best to deliver the $disconnect event to your integration, but it cannot guarantee delivery.
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DeleteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { APIGatewayProxyWebsocketEventV2 } from "aws-lambda";
 
 // @see https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/javascript_dynamodb_code_examples.html
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
-export const handler = async (event: APIGatewayProxyWebsocketEventV2) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handler = async (event: any) => {
     const command = new DeleteCommand({
         TableName: process.env.TABLE_NAME,
         Key: {
