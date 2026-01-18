@@ -1,40 +1,41 @@
 {
-  "name": "banguins-backend",
-  "version": "1.0.0",
-  "description": "Banguins backend multiplayer negotiation server",
-  "private": true,
-  "scripts": {
-    "postinstall": "(cd lambdas && npm install)",
-    "bootstrap": "cdk bootstrap",
-    "precommit": "npm run lint && npm run format",
-    "build": "tsc",
-    "local-build": "sam --build -t ./cdk.out/banguins-app.template.json",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
-    "format": "prettier . --write --ignore-unknown",
-    "watch": "tsc -w",
-    "cdk": "cdk",
-    "synth": "cdk synth",
-    "deploy": "cdk deploy --outputs-file latest-deploy.json && cp ./latest-deploy.json ../admin/config",
-    "delete": "cdk destroy --all",
-    "prepare": "husky"
-  },
-  "license": "UNLICENSED",
-  "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "@types/node": "22.7.9",
-    "aws-cdk": "2.1010.0",
-    "eslint": "^9.39.2",
-    "eslint-config-prettier": "^10.1.8",
-    "globals": "^16.5.0",
-    "husky": "^9.1.7",
-    "jiti": "^2.6.1",
-    "prettier": "3.7.4",
-    "typescript": "~5.6.3",
-    "typescript-eslint": "^8.50.0"
-  },
-  "dependencies": {
-    "aws-cdk-lib": "2.190.0",
-    "constructs": "^10.0.0"
-  }
+    "name": "banguins-backend",
+    "version": "1.0.0",
+    "description": "Banguins backend multiplayer negotiation server",
+    "private": true,
+    "scripts": {
+        "postinstall": "(cd lambdas && npm install)",
+        "bootstrap": "cdk bootstrap",
+        "precommit": "npm run lint && npm run format",
+        "build": "tsc",
+        "local-build": "sam --build -t ./cdk.out/banguins-app.template.json",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint .",
+        "format": "prettier . --write --ignore-unknown",
+        "watch": "tsc -w",
+        "cdk": "cdk",
+        "synth": "cdk synth",
+        "deploy": "cdk deploy --outputs-file latest-deploy.json && cp ./latest-deploy.json ../admin/config",
+        "delete": "cdk destroy --all",
+        "prepare": "husky"
+    },
+    "license": "UNLICENSED",
+    "devDependencies": {
+        "@eslint/js": "^9.39.2",
+        "@types/node": "22.7.9",
+        "aws-cdk": "2.1010.0",
+        "eslint": "^9.39.2",
+        "eslint-config-prettier": "^10.1.8",
+        "globals": "^16.5.0",
+        "husky": "^9.1.7",
+        "jiti": "^2.6.1",
+        "prettier": "3.7.4",
+        "typescript": "~5.6.3",
+        "typescript-eslint": "^8.50.0"
+    },
+    "dependencies": {
+        "@types/aws-lambda": "^8.10.159",
+        "aws-cdk-lib": "2.190.0",
+        "constructs": "^10.0.0"
+    }
 }

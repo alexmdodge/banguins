@@ -1,4 +1,7 @@
 {
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.detectIndentation": false,
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "eslint.useESLintClass": true
 }

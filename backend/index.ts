@@ -1,27 +1,27 @@
 #!/usr/bin/env node
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import {
-  CfnDeployment,
-  CfnIntegration,
-  CfnIntegrationProps,
-  CfnRoute,
-  CfnStage,
-  WebSocketApi,
+    CfnDeployment,
+    CfnIntegration,
+    CfnIntegrationProps,
+    CfnRoute,
+    CfnStage,
+    WebSocketApi,
 } from "aws-cdk-lib/aws-apigatewayv2";
 import { App, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import {
-  Effect,
-  PolicyStatement,
-  Role,
-  ServicePrincipal,
+    Effect,
+    PolicyStatement,
+    Role,
+    ServicePrincipal,
 } from "aws-cdk-lib/aws-iam";
 import { AttributeType, Table } from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 import { CfnOutput } from "aws-cdk-lib";
 import config from "./config.json";
 import {
-  NodejsFunction,
-  NodejsFunctionProps,
+    NodejsFunction,
+    NodejsFunctionProps,
 } from "aws-cdk-lib/aws-lambda-nodejs";
 import { join } from "path";
 
@@ -31,156 +31,163 @@ const BANGUINS_TABLE_NAME = "banguins_connections";
 const LAMBDAS_ROOT = join(__dirname, "lambdas");
 
 class BanguinsStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
+    constructor(scope: Construct, id: string, props?: StackProps) {
+        super(scope, id, props);
 
-    const { region, account_id, stage } = config;
+        const { region, account_id, stage } = config;
 
-    // Step 1 - Initialize API
-    const name = `${id}-api`;
-    const api = new WebSocketApi(this, name, {
-      apiName: BANGUINS_API_NAME,
-    });
+        // Step 1 - Initialize API
+        const name = `${id}-api`;
+        const api = new WebSocketApi(this, name, {
+            apiName: BANGUINS_API_NAME,
+        });
 
-    // Step 2 - Initialize DDB Table
-    const APP_API_TABLE_NAME = `${name}-table`;
-    const table = new Table(this, APP_API_TABLE_NAME, {
-      tableName: BANGUINS_TABLE_NAME,
-      partitionKey: {
-        name: "connectionId",
-        type: AttributeType.STRING,
-      },
-      readCapacity: 5,
-      writeCapacity: 5,
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
+        // Step 2 - Initialize DDB Table
+        const APP_API_TABLE_NAME = `${name}-table`;
+        const table = new Table(this, APP_API_TABLE_NAME, {
+            tableName: BANGUINS_TABLE_NAME,
+            partitionKey: {
+                name: "connectionId",
+                type: AttributeType.STRING,
+            },
+            readCapacity: 5,
+            writeCapacity: 5,
+            removalPolicy: RemovalPolicy.DESTROY,
+        });
 
-    // Step 3 - Setup Lambda Functions & Access Policies
-    const lambdasDefaults: NodejsFunctionProps = {
-      bundling: {
-        externalModules: ["aws-sdk"],
-      },
-      depsLockFilePath: join(LAMBDAS_ROOT, "package-lock.json"),
-      environment: {
-        TABLE_NAME: BANGUINS_TABLE_NAME,
-      },
-      runtime: Runtime.NODEJS_22_X,
-    };
+        // Step 3 - Setup Lambda Functions & Access Policies
+        const lambdasDefaults: NodejsFunctionProps = {
+            bundling: {
+                externalModules: ["aws-sdk"],
+            },
+            depsLockFilePath: join(LAMBDAS_ROOT, "package-lock.json"),
+            environment: {
+                TABLE_NAME: BANGUINS_TABLE_NAME,
+            },
+            runtime: Runtime.NODEJS_22_X,
+        };
 
-    const lambdaWebsocketPolicy = new PolicyStatement({
-      effect: Effect.ALLOW,
-      resources: [
-        `arn:aws:execute-api:${region}:${account_id}:${api.apiId}/${stage}/POST/@connections/*`,
-      ],
-      actions: ["execute-api:ManageConnections"],
-    });
+        const lambdaWebsocketPolicy = new PolicyStatement({
+            effect: Effect.ALLOW,
+            resources: [
+                `arn:aws:execute-api:${region}:${account_id}:${api.apiId}/${stage}/POST/@connections/*`,
+            ],
+            actions: ["execute-api:ManageConnections"],
+        });
 
-    const connectFunc = new NodejsFunction(this, "connect-lambda", {
-      entry: join(LAMBDAS_ROOT, "onconnect.ts"),
-      ...lambdasDefaults,
-    });
+        const connectFunc = new NodejsFunction(this, "connect-lambda", {
+            entry: join(LAMBDAS_ROOT, "onconnect.ts"),
+            ...lambdasDefaults,
+        });
 
-    const disconnectFunc = new NodejsFunction(this, "disconnect-lambda", {
-      entry: join(LAMBDAS_ROOT, "ondisconnect.ts"),
-      ...lambdasDefaults,
-    });
+        const disconnectFunc = new NodejsFunction(this, "disconnect-lambda", {
+            entry: join(LAMBDAS_ROOT, "ondisconnect.ts"),
+            ...lambdasDefaults,
+        });
 
-    const messageFunc = new NodejsFunction(this, "message-lambda", {
-      entry: join(LAMBDAS_ROOT, "sendmessage.ts"),
-      initialPolicy: [lambdaWebsocketPolicy],
-      ...lambdasDefaults,
-    });
+        const messageFunc = new NodejsFunction(this, "message-lambda", {
+            entry: join(LAMBDAS_ROOT, "sendmessage.ts"),
+            initialPolicy: [lambdaWebsocketPolicy],
+            ...lambdasDefaults,
+        });
 
-    table.grantReadWriteData(connectFunc);
-    table.grantReadWriteData(disconnectFunc);
-    table.grantReadWriteData(messageFunc);
+        table.grantReadWriteData(connectFunc);
+        table.grantReadWriteData(disconnectFunc);
+        table.grantReadWriteData(messageFunc);
 
-    // Step 4 - Allow API Gateway to Access Lambdas
-    const apiWebsocketPolicy = new PolicyStatement({
-      effect: Effect.ALLOW,
-      resources: [
-        connectFunc.functionArn,
-        disconnectFunc.functionArn,
-        messageFunc.functionArn,
-      ],
-      actions: ["lambda:InvokeFunction"],
-    });
+        // Step 4 - Allow API Gateway to Access Lambdas
+        const apiWebsocketPolicy = new PolicyStatement({
+            effect: Effect.ALLOW,
+            resources: [
+                connectFunc.functionArn,
+                disconnectFunc.functionArn,
+                messageFunc.functionArn,
+            ],
+            actions: ["lambda:InvokeFunction"],
+        });
 
-    const apiWebsocketRole = new Role(this, `${name}-iam-role`, {
-      assumedBy: new ServicePrincipal("apigateway.amazonaws.com"),
-    });
-    apiWebsocketRole.addToPolicy(apiWebsocketPolicy);
+        const apiWebsocketRole = new Role(this, `${name}-iam-role`, {
+            assumedBy: new ServicePrincipal("apigateway.amazonaws.com"),
+        });
+        apiWebsocketRole.addToPolicy(apiWebsocketPolicy);
 
-    // Step 5 - Connect Lambdas to API Gateway Websocket
-    const createIntegration = (name: string, arn: string): CfnIntegration => {
-      const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${arn}/invocations`;
-      const props: CfnIntegrationProps = {
-        apiId: api.apiId,
-        integrationType: "AWS_PROXY",
-        integrationUri,
-        credentialsArn: apiWebsocketRole.roleArn,
-      };
+        // Step 5 - Connect Lambdas to API Gateway Websocket
+        const createIntegration = (
+            name: string,
+            arn: string,
+        ): CfnIntegration => {
+            const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${arn}/invocations`;
+            const props: CfnIntegrationProps = {
+                apiId: api.apiId,
+                integrationType: "AWS_PROXY",
+                integrationUri,
+                credentialsArn: apiWebsocketRole.roleArn,
+            };
 
-      return new CfnIntegration(this, `${name}-lambda-integration`, props);
-    };
+            return new CfnIntegration(
+                this,
+                `${name}-lambda-integration`,
+                props,
+            );
+        };
 
-    const connectIntegration = createIntegration(
-      "connect",
-      connectFunc.functionArn,
-    );
-    const disconnectIntegration = createIntegration(
-      "disconnect",
-      disconnectFunc.functionArn,
-    );
-    const messageIntegration = createIntegration(
-      "message",
-      messageFunc.functionArn,
-    );
+        const connectIntegration = createIntegration(
+            "connect",
+            connectFunc.functionArn,
+        );
+        const disconnectIntegration = createIntegration(
+            "disconnect",
+            disconnectFunc.functionArn,
+        );
+        const messageIntegration = createIntegration(
+            "message",
+            messageFunc.functionArn,
+        );
 
-    // Step 6 - Connect API Gateway Routes
-    const connectRoute = new CfnRoute(this, "connect-route", {
-      apiId: api.apiId,
-      routeKey: "$connect",
-      authorizationType: "NONE",
-      target: "integrations/" + connectIntegration.ref,
-    });
+        // Step 6 - Connect API Gateway Routes
+        const connectRoute = new CfnRoute(this, "connect-route", {
+            apiId: api.apiId,
+            routeKey: "$connect",
+            authorizationType: "NONE",
+            target: "integrations/" + connectIntegration.ref,
+        });
 
-    const disconnectRoute = new CfnRoute(this, "disconnect-route", {
-      apiId: api.apiId,
-      routeKey: "$disconnect",
-      authorizationType: "NONE",
-      target: "integrations/" + disconnectIntegration.ref,
-    });
+        const disconnectRoute = new CfnRoute(this, "disconnect-route", {
+            apiId: api.apiId,
+            routeKey: "$disconnect",
+            authorizationType: "NONE",
+            target: "integrations/" + disconnectIntegration.ref,
+        });
 
-    const messageRoute = new CfnRoute(this, "message-route", {
-      apiId: api.apiId,
-      routeKey: "sendmessage",
-      authorizationType: "NONE",
-      target: "integrations/" + messageIntegration.ref,
-    });
+        const messageRoute = new CfnRoute(this, "message-route", {
+            apiId: api.apiId,
+            routeKey: "sendmessage",
+            authorizationType: "NONE",
+            target: "integrations/" + messageIntegration.ref,
+        });
 
-    const deployment = new CfnDeployment(this, `${name}-deployment`, {
-      apiId: api.apiId,
-    });
+        const deployment = new CfnDeployment(this, `${name}-deployment`, {
+            apiId: api.apiId,
+        });
 
-    new CfnStage(this, `${name}-stage`, {
-      apiId: api.apiId,
-      autoDeploy: true,
-      deploymentId: deployment.ref,
-      stageName: "dev",
-    });
+        new CfnStage(this, `${name}-stage`, {
+            apiId: api.apiId,
+            autoDeploy: true,
+            deploymentId: deployment.ref,
+            stageName: "dev",
+        });
 
-    deployment.node.addDependency(connectRoute);
-    deployment.node.addDependency(disconnectRoute);
-    deployment.node.addDependency(messageRoute);
+        deployment.node.addDependency(connectRoute);
+        deployment.node.addDependency(disconnectRoute);
+        deployment.node.addDependency(messageRoute);
 
-    // add the domain name of the ws api to the cloudformation outputs
-    new CfnOutput(this, "websocket-api-endpoint", {
-      description: "The endpoint for the websocket api",
-      value: api.apiEndpoint + "/dev",
-      exportName: "websocket-api-endpoint",
-    });
-  }
+        // add the domain name of the ws api to the cloudformation outputs
+        new CfnOutput(this, "websocket-api-endpoint", {
+            description: "The endpoint for the websocket api",
+            value: api.apiEndpoint + "/dev",
+            exportName: "websocket-api-endpoint",
+        });
+    }
 }
 
 const app = new App();

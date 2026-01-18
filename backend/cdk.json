@@ -1,6 +1,6 @@
 {
-  "app": "npx ts-node -- ./index.ts",
-  "context": {
-    "@aws-cdk/aws-lambda-nodejs:useLatestRuntimeVersion": true
-  }
+    "app": "npx ts-node -- ./index.ts",
+    "context": {
+        "@aws-cdk/aws-lambda-nodejs:useLatestRuntimeVersion": true
+    }
 }

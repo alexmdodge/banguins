@@ -1,5 +1,5 @@
 {
-  "banguins-app": {
-    "websocketapiendpoint": "wss://fnn0l5vkcg.execute-api.us-east-1.amazonaws.com/dev"
-  }
+    "banguins-app": {
+        "websocketapiendpoint": "wss://fnn0l5vkcg.execute-api.us-east-1.amazonaws.com/dev"
+    }
 }
