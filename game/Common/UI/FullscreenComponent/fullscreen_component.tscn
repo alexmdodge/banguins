@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://b3tg00jpc4ht8"]
+
+[ext_resource type="Texture2D" uid="uid://dqgb0syh34vne" path="res://Common/UI/Icons/Skillicon5_28.png" id="1_qcarm"]
+[ext_resource type="Script" uid="uid://dbgxr7gv1re13" path="res://Common/UI/FullscreenComponent/fullscreen_component.gd" id="1_vetpd"]
+[ext_resource type="Texture2D" uid="uid://cj7ph3kfi85sd" path="res://Common/UI/Icons/Skillicon5_28-windowed.png" id="2_vetpd"]
+
+[node name="MenuControls" type="MarginContainer"]
+z_index = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 0
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+script = ExtResource("1_vetpd")
+
+[node name="ToggleFullscreen" type="TextureButton" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("1_qcarm")
+texture_pressed = ExtResource("2_vetpd")
+stretch_mode = 4

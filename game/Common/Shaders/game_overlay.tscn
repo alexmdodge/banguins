@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://bcqa7iodxwsyo"]
+
+[ext_resource type="Shader" uid="uid://6dsj0ky5uk3n" path="res://Common/Shaders/pallette_limiter_shader.gdshader" id="1_x0xjx"]
+[ext_resource type="Texture2D" uid="uid://b0qru6aunlajq" path="res://Common/Shaders/pastel-horizon-1x.png" id="2_cmdmh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hdign"]
+shader = ExtResource("1_x0xjx")
+shader_parameter/palette = ExtResource("2_cmdmh")
+
+[node name="ColorOverlay" type="ColorRect"]
+material = SubResource("ShaderMaterial_hdign")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+color = Color(1, 1, 1, 0.247059)

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://cwbqv82aorj1a"]
+
+[ext_resource type="AudioStream" uid="uid://d01dk5ip52niu" path="res://Common/Audio/AudioManager/audio_main_background.mp3" id="1_gsgyi"]
+
+[node name="LevelAudio" type="AudioStreamPlayer"]
+stream = ExtResource("1_gsgyi")
+autoplay = true
+bus = &"Music"
+playback_type = 1
+parameters/looping = true

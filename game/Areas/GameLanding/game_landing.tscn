@@ -1,0 +1,165 @@
+[gd_scene load_steps=9 format=3 uid="uid://bjpb5sjh002wh"]
+
+[ext_resource type="Script" uid="uid://yqwikyyfn8ju" path="res://Areas/GameLanding/game_landing.gd" id="1_k122x"]
+[ext_resource type="Texture2D" uid="uid://bc7sdjqp6llau" path="res://Areas/GameLanding/game_landing.png" id="2_0kgte"]
+[ext_resource type="FontFile" uid="uid://b2h0sthxclhl1" path="res://Common/UI/Fonts/MOOD MKII.ttf" id="3_j7e10"]
+[ext_resource type="PackedScene" uid="uid://b3tg00jpc4ht8" path="res://Common/UI/FullscreenComponent/fullscreen_component.tscn" id="4_337cj"]
+[ext_resource type="PackedScene" uid="uid://dcl4ndnx7luh" path="res://Common/UI/GameVersionComponent/game_version_component.tscn" id="5_aqokr"]
+[ext_resource type="PackedScene" path="res://Common/Shaders/game_overlay.tscn" id="6_337cj"]
+[ext_resource type="FontFile" uid="uid://0pcukngt63id" path="res://Common/UI/Fonts/jura-latin-300-normal.ttf" id="8_82nnd"]
+[ext_resource type="PackedScene" uid="uid://cwbqv82aorj1a" path="res://Common/Audio/AudioManager/audio_manager.tscn" id="8_hdign"]
+
+[node name="GameLanding" type="CanvasLayer"]
+layer = 0
+script = ExtResource("1_k122x")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("2_0kgte")
+stretch_mode = 6
+flip_h = true
+
+[node name="LandingControls" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -16.0
+offset_right = 100.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"TransparentPanelContainer"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LandingControls"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="LandingControls/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = -30
+theme_override_constants/margin_bottom = -90
+
+[node name="Label 1" type="Label" parent="LandingControls/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.219608, 0.278431, 0.388235, 1)
+theme_override_colors/font_outline_color = Color(0.161877, 0.213548, 0.326833, 1)
+theme_override_constants/shadow_offset_x = 10
+theme_override_constants/shadow_offset_y = 10
+theme_override_constants/outline_size = 36
+theme_override_constants/shadow_outline_size = 52
+theme_override_fonts/font = ExtResource("3_j7e10")
+theme_override_font_sizes/font_size = 120
+text = "Temporal"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TinkerMargin" type="MarginContainer" parent="LandingControls/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = -20
+
+[node name="Label 2" type="Label" parent="LandingControls/VBoxContainer/TinkerMargin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.219608, 0.278431, 0.388235, 1)
+theme_override_colors/font_outline_color = Color(0.166255, 0.21891, 0.334337, 1)
+theme_override_constants/shadow_offset_x = 8
+theme_override_constants/shadow_offset_y = 8
+theme_override_constants/outline_size = 30
+theme_override_constants/shadow_outline_size = 30
+theme_override_font_sizes/font_size = 180
+text = "LOOTERS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LandingControls/VBoxContainer"]
+custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
+layout_mode = 2
+theme_override_constants/separation = 26
+alignment = 1
+
+[node name="Load Game" type="Button" parent="LandingControls/VBoxContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+theme_type_variation = &"GameLandingButton"
+text = "Load"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="LandingControls/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 26
+alignment = 1
+
+[node name="MarginContainerNewGame" type="MarginContainer" parent="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="New Game" type="Button" parent="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer2/MarginContainerNewGame"]
+layout_mode = 2
+theme_type_variation = &"StyledButton"
+theme_override_font_sizes/font_size = 64
+text = "NEW GAME"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LandingControls/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 26
+alignment = 1
+
+[node name="MarginContainerQuit" type="MarginContainer" parent="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer/MarginContainerQuit"]
+layout_mode = 2
+theme_type_variation = &"StyledButton"
+theme_override_font_sizes/font_size = 64
+text = "EXIT"
+
+[node name="MenuControls" parent="." instance=ExtResource("4_337cj")]
+
+[node name="GameVersion" parent="." instance=ExtResource("5_aqokr")]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -64.0
+offset_right = 52.0
+offset_bottom = 0.0
+grow_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -173.5
+offset_top = -40.0
+offset_right = 173.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 29
+
+[node name="Label" type="Label" parent="MarginContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("8_82nnd")
+theme_override_font_sizes/font_size = 32
+text = "By Nizarras and Dodger"
+horizontal_alignment = 1
+
+[node name="ColorOverlay" parent="." instance=ExtResource("6_337cj")]
+color = Color(1, 1, 1, 0.25098)
+
+[node name="LevelAudio" parent="." instance=ExtResource("8_hdign")]
+bus = &"Master"
+
+[connection signal="pressed" from="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer2/MarginContainerNewGame/New Game" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer/MarginContainerQuit/Exit" to="." method="_on_exit_pressed"]
