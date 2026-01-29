@@ -1,13 +1,20 @@
 [gd_scene load_steps=9 format=3 uid="uid://bjpb5sjh002wh"]
 
 [ext_resource type="Script" uid="uid://yqwikyyfn8ju" path="res://Areas/GameLanding/game_landing.gd" id="1_k122x"]
-[ext_resource type="Texture2D" uid="uid://bc7sdjqp6llau" path="res://Areas/GameLanding/game_landing.png" id="2_0kgte"]
-[ext_resource type="FontFile" uid="uid://b2h0sthxclhl1" path="res://Common/UI/Fonts/MOOD MKII.ttf" id="3_j7e10"]
 [ext_resource type="PackedScene" uid="uid://b3tg00jpc4ht8" path="res://Common/UI/FullscreenComponent/fullscreen_component.tscn" id="4_337cj"]
 [ext_resource type="PackedScene" uid="uid://dcl4ndnx7luh" path="res://Common/UI/GameVersionComponent/game_version_component.tscn" id="5_aqokr"]
-[ext_resource type="PackedScene" path="res://Common/Shaders/game_overlay.tscn" id="6_337cj"]
+[ext_resource type="PackedScene" uid="uid://br5m0rkp74ns2" path="res://Common/Shaders/game_overlay.tscn" id="6_337cj"]
 [ext_resource type="FontFile" uid="uid://0pcukngt63id" path="res://Common/UI/Fonts/jura-latin-300-normal.ttf" id="8_82nnd"]
 [ext_resource type="PackedScene" uid="uid://cwbqv82aorj1a" path="res://Common/Audio/AudioManager/audio_manager.tscn" id="8_hdign"]
+
+[sub_resource type="Gradient" id="Gradient_337cj"]
+offsets = PackedFloat32Array(0, 0.3487395, 0.73109245, 0.8739496, 1)
+colors = PackedColorArray(0.8774782, 0.91883993, 1, 1, 0.79509544, 0.9264597, 1, 1, 0.4792948, 0.95566887, 1, 1, 0.13480166, 0.9875319, 1, 1, 0, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_aqokr"]
+gradient = SubResource("Gradient_337cj")
+fill = 1
+fill_from = Vector2(0, 1)
 
 [node name="GameLanding" type="CanvasLayer"]
 layer = 0
@@ -21,11 +28,11 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource("2_0kgte")
+texture = SubResource("GradientTexture2D_aqokr")
 stretch_mode = 6
 flip_h = true
 
-[node name="LandingControls" type="PanelContainer" parent="."]
+[node name="LandingTitle" type="PanelContainer" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -37,90 +44,61 @@ offset_right = 100.0
 offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_type_variation = &"TransparentPanelContainer"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="LandingControls"]
+[node name="LandingColumn" type="VBoxContainer" parent="LandingTitle"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="LandingControls/VBoxContainer"]
+[node name="LandingTitleContainer" type="MarginContainer" parent="LandingTitle/LandingColumn"]
 layout_mode = 2
-theme_override_constants/margin_top = -30
-theme_override_constants/margin_bottom = -90
 
-[node name="Label 1" type="Label" parent="LandingControls/VBoxContainer/MarginContainer"]
+[node name="GameTitle" type="Label" parent="LandingTitle/LandingColumn/LandingTitleContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.219608, 0.278431, 0.388235, 1)
-theme_override_colors/font_outline_color = Color(0.161877, 0.213548, 0.326833, 1)
-theme_override_constants/shadow_offset_x = 10
-theme_override_constants/shadow_offset_y = 10
-theme_override_constants/outline_size = 36
-theme_override_constants/shadow_outline_size = 52
-theme_override_fonts/font = ExtResource("3_j7e10")
 theme_override_font_sizes/font_size = 120
-text = "Temporal"
+text = "BANGuins"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TinkerMargin" type="MarginContainer" parent="LandingControls/VBoxContainer"]
-layout_mode = 2
-theme_override_constants/margin_bottom = -20
-
-[node name="Label 2" type="Label" parent="LandingControls/VBoxContainer/TinkerMargin"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0.219608, 0.278431, 0.388235, 1)
-theme_override_colors/font_outline_color = Color(0.166255, 0.21891, 0.334337, 1)
-theme_override_constants/shadow_offset_x = 8
-theme_override_constants/shadow_offset_y = 8
-theme_override_constants/outline_size = 30
-theme_override_constants/shadow_outline_size = 30
-theme_override_font_sizes/font_size = 180
-text = "LOOTERS"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="LandingControls/VBoxContainer"]
+[node name="LandingControls" type="HBoxContainer" parent="LandingTitle/LandingColumn"]
 custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
 layout_mode = 2
 theme_override_constants/separation = 26
 alignment = 1
 
-[node name="Load Game" type="Button" parent="LandingControls/VBoxContainer/HBoxContainer"]
-visible = false
-layout_mode = 2
-theme_type_variation = &"GameLandingButton"
-text = "Load"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="LandingControls/VBoxContainer/HBoxContainer"]
+[node name="CenteredButton" type="HBoxContainer" parent="LandingTitle/LandingColumn/LandingControls"]
 custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 26
 alignment = 1
 
-[node name="MarginContainerNewGame" type="MarginContainer" parent="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer2"]
+[node name="CenteredButtonMargin" type="MarginContainer" parent="LandingTitle/LandingColumn/LandingControls/CenteredButton"]
 layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="New Game" type="Button" parent="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer2/MarginContainerNewGame"]
+[node name="New Game" type="Button" parent="LandingTitle/LandingColumn/LandingControls/CenteredButton/CenteredButtonMargin"]
 layout_mode = 2
-theme_type_variation = &"StyledButton"
 theme_override_font_sizes/font_size = 64
 text = "NEW GAME"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="LandingControls/VBoxContainer/HBoxContainer"]
+[node name="CenteredButton2" type="HBoxContainer" parent="LandingTitle/LandingColumn/LandingControls"]
 custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 26
 alignment = 1
 
-[node name="MarginContainerQuit" type="MarginContainer" parent="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="CenteredButtonMargin" type="MarginContainer" parent="LandingTitle/LandingColumn/LandingControls/CenteredButton2"]
 layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="Exit" type="Button" parent="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer/MarginContainerQuit"]
+[node name="Exit" type="Button" parent="LandingTitle/LandingColumn/LandingControls/CenteredButton2/CenteredButtonMargin"]
 layout_mode = 2
-theme_type_variation = &"StyledButton"
 theme_override_font_sizes/font_size = 64
 text = "EXIT"
 
@@ -161,5 +139,5 @@ color = Color(1, 1, 1, 0.25098)
 [node name="LevelAudio" parent="." instance=ExtResource("8_hdign")]
 bus = &"Master"
 
-[connection signal="pressed" from="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer2/MarginContainerNewGame/New Game" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="LandingControls/VBoxContainer/HBoxContainer/HBoxContainer/MarginContainerQuit/Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="LandingTitle/LandingColumn/LandingControls/CenteredButton/CenteredButtonMargin/New Game" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="LandingTitle/LandingColumn/LandingControls/CenteredButton2/CenteredButtonMargin/Exit" to="." method="_on_exit_pressed"]

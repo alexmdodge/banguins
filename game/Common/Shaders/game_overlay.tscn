@@ -1,11 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://bcqa7iodxwsyo"]
+[gd_scene load_steps=4 format=3 uid="uid://br5m0rkp74ns2"]
 
-[ext_resource type="Shader" uid="uid://6dsj0ky5uk3n" path="res://Common/Shaders/pallette_limiter_shader.gdshader" id="1_x0xjx"]
-[ext_resource type="Texture2D" uid="uid://b0qru6aunlajq" path="res://Common/Shaders/pastel-horizon-1x.png" id="2_cmdmh"]
+[ext_resource type="Shader" uid="uid://cav2tcch3t57u" path="res://Common/Shaders/pallette_limiter_shader.gdshader" id="1_x0xjx"]
+[ext_resource type="Texture2D" uid="uid://bb0pga7jjlnwm" path="res://Common/Shaders/lost-century-1x.png" id="2_x0xjx"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hdign"]
 shader = ExtResource("1_x0xjx")
-shader_parameter/palette = ExtResource("2_cmdmh")
+shader_parameter/palette = ExtResource("2_x0xjx")
 
 [node name="ColorOverlay" type="ColorRect"]
 material = SubResource("ShaderMaterial_hdign")
