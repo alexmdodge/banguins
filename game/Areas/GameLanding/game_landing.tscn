@@ -1,10 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://bjpb5sjh002wh"]
+[gd_scene load_steps=8 format=3 uid="uid://bjpb5sjh002wh"]
 
 [ext_resource type="Script" uid="uid://yqwikyyfn8ju" path="res://Areas/GameLanding/game_landing.gd" id="1_k122x"]
 [ext_resource type="PackedScene" uid="uid://b3tg00jpc4ht8" path="res://Common/UI/FullscreenComponent/fullscreen_component.tscn" id="4_337cj"]
 [ext_resource type="PackedScene" uid="uid://dcl4ndnx7luh" path="res://Common/UI/GameVersionComponent/game_version_component.tscn" id="5_aqokr"]
 [ext_resource type="PackedScene" uid="uid://br5m0rkp74ns2" path="res://Common/Shaders/game_overlay.tscn" id="6_337cj"]
-[ext_resource type="FontFile" uid="uid://0pcukngt63id" path="res://Common/UI/Fonts/jura-latin-300-normal.ttf" id="8_82nnd"]
 [ext_resource type="PackedScene" uid="uid://cwbqv82aorj1a" path="res://Common/Audio/AudioManager/audio_manager.tscn" id="8_hdign"]
 
 [sub_resource type="Gradient" id="Gradient_337cj"]
@@ -102,8 +101,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 64
 text = "EXIT"
 
-[node name="MenuControls" parent="." instance=ExtResource("4_337cj")]
-
 [node name="GameVersion" parent="." instance=ExtResource("5_aqokr")]
 anchors_preset = 2
 anchor_top = 1.0
@@ -113,7 +110,7 @@ offset_right = 52.0
 offset_bottom = 0.0
 grow_vertical = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="GameAuthor" type="MarginContainer" parent="."]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -126,14 +123,20 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/margin_bottom = 29
 
-[node name="Label" type="Label" parent="MarginContainer"]
+[node name="TinyCabinGames" type="Label" parent="GameAuthor"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("8_82nnd")
+theme_override_colors/font_color = Color(0.07564021, 0.31617028, 0.3236125, 1)
 theme_override_font_sizes/font_size = 32
-text = "By Nizarras and Dodger"
+text = "TinyCabin Games"
 horizontal_alignment = 1
 
-[node name="ColorOverlay" parent="." instance=ExtResource("6_337cj")]
+[node name="FullscreenControls" parent="." instance=ExtResource("4_337cj")]
+modulate = Color(1.6605109e-06, 0.39989004, 0.40947282, 1)
+offset_left = -150.0
+offset_top = -150.0
+
+[node name="GameOverlay" parent="." instance=ExtResource("6_337cj")]
+visible = false
 color = Color(1, 1, 1, 0.25098)
 
 [node name="LevelAudio" parent="." instance=ExtResource("8_hdign")]

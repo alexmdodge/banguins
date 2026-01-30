@@ -15,7 +15,8 @@
         "watch": "tsc -w",
         "cdk": "AWS_PROFILE=banguins cdk",
         "synth": "AWS_PROFILE=banguins cdk synth",
-        "deploy": "AWS_PROFILE=banguins cdk deploy --outputs-file latest-deploy.json && cp ./latest-deploy.json ../admin/config",
+        "deploy": "AWS_PROFILE=banguins cdk deploy --outputs-file latest-deploy.json && npm run copy:config",
+        "copy:config": "cp ./latest-deploy.json ../admin/config && cp ./latest-deploy.json ../game",
         "delete": "AWS_PROFILE=banguins cdk destroy --all",
         "prepare": "husky"
     },

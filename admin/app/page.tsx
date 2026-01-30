@@ -34,11 +34,11 @@ function ConnectionStatusBadge({ state }: { state: string }) {
   return <Badge variant="outline">{States.DISCONNECTED}</Badge>;
 }
 
-type GameMessage = {
-  userId: string;
-  gameId: string;
-  message: string;
-};
+//type GameMessage = {
+//  userId: string;
+//  gameId: string;
+//  message: string;
+//};
 
 export default function Home() {
   const [wsState, setWsState] = useState(States.DISCONNECTED);
@@ -46,7 +46,7 @@ export default function Home() {
   const [gameId, setGameId] = useState<string | undefined>();
   const [userId, setUserId] = useState<string | undefined>();
   const [status, setStatus] = useState<string[]>([]);
-  const [messages, setMessages] = useState<GameMessage[]>([]);
+  const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState("");
   const socketRef = useRef<WebSocket | null>(null);
 
@@ -81,7 +81,8 @@ export default function Home() {
     };
     socket.onmessage = (event) => {
       try {
-        const msg: GameMessage = JSON.parse(event.data);
+        //const msg: GameMessage = JSON.parse(event.data);
+        const msg = event.data;
         setMessages((prev) => [...prev, msg]);
       } catch (e) {
         setStatus((prev) => [...prev, `Error parsing msg: ${e}`]);
@@ -97,7 +98,7 @@ export default function Home() {
   const sendMessage = () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(
-        JSON.stringify({ action: "sendmessage", data: input })
+        JSON.stringify({ action: "sendmessage", data: input }),
       );
       setInput("");
       return;
@@ -215,7 +216,8 @@ export default function Home() {
           <hr />
           {messages.map((msg, i) => (
             <CardContent key={i} className="space-y-2">
-              [{msg.userId}] | {msg.message}
+              {msg}
+              {/*[{msg.userId}] | {msg.message}*/}
             </CardContent>
           ))}
         </Card>
