@@ -1,5 +1,5 @@
 {
-  "banguins-app": {
-    "websocketapiendpoint": "wss://t52guykf37.execute-api.us-east-1.amazonaws.com/dev"
-  }
+    "banguins-app": {
+        "websocketapiendpoint": "wss://t52guykf37.execute-api.us-east-1.amazonaws.com/dev"
+    }
 }
